@@ -1,0 +1,55 @@
+{
+  "builders": [{
+    "type": "qemu",
+    "iso_url": "{{user `mirror`}}/stretch/stretch-latest.iso",
+    "iso_checksum": "{{user `iso_checksum`}}",
+    "iso_checksum_type": "{{user `iso_checksum_type`}}",
+    "output_directory": "output-debian-stretch-amd64-{{build_type}}",
+    "vm_name": "debian-stretch",
+    "disk_size": "{{user `disk_size`}}",
+    "headless": "true",
+    "accelerator": "kvm",
+    "http_directory": "http",
+    "boot_wait": "5s",
+    "boot_command": [
+      "<esc><wait>",
+      "auto ",
+      "preseed/url=http://{{.HTTPIP}}:{{.HTTPPort}}/debian-stretch/preseed.cfg ",
+      "<enter>"
+    ],
+    "ssh_timeout": "{{user `ssh_timeout`}}",
+    "ssh_username": "rvn",
+    "ssh_password": "rvn",
+    "shutdown_command": "sudo systemctl poweroff",
+    "qemuargs": [
+      ["-m", "{{user `memory`}}"],
+      ["-smp", "{{user `cpus`}}"]
+    ]
+  }], 
+  "provisioners": [{
+    "type": "shell",
+    "scripts": [
+      "scripts/common/rvn.sh",
+      "scripts/debian/rvn.sh",
+      "scripts/debian/qemu.sh",
+      "scripts/common/sshd.sh",
+      "scripts/debian/cleanup.sh",
+      "scripts/common/minimize.sh"
+    ]
+  }],
+  "post-processors": [{
+    "type": "vagrant",
+    "compression_level": "{{user `compression_level`}}",
+    "output": "debian-stretch-amd64-{{.Provider}}.box"
+  }],
+  "variables": {
+    "compression_level": "6",
+    "cpus": "1",
+    "disk_size": "40000",
+    "iso_checksum": "c2795913dd12569654f8a92f5bd1049fb6ee0e3a7db6436e2a4abb1539c90016",
+    "iso_checksum_type": "sha256",
+    "memory": "512",
+    "mirror": "http://mirror.deterlab.net/mirrors/debian-cd",
+    "ssh_timeout": "60m"
+  }
+}

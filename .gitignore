@@ -1,0 +1,5 @@
+*.sw*
+
+*.box
+*.qcow2
+packer_cache
