@@ -29,6 +29,7 @@
   "provisioners": [{
     "type": "shell",
     "scripts": [
+      "scripts/debian/init.sh",
       "scripts/common/rvn.sh",
       "scripts/debian/rvn.sh",
       "scripts/debian/qemu.sh",
@@ -36,11 +37,6 @@
       "scripts/debian/cleanup.sh",
       "scripts/common/minimize.sh"
     ]
-  }],
-  "post-processors": [{
-    "type": "vagrant",
-    "compression_level": "{{user `compression_level`}}",
-    "output": "debian-stretch-amd64-{{.Provider}}.box"
   }],
   "variables": {
     "compression_level": "6",
