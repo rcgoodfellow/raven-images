@@ -12,3 +12,6 @@ sudo apt-get install -y \
 	tree \
 	nfs-common
 
+sudo apt-cache autoremove
+sudo apt-cache clean
+sudo apt-cache autoclean

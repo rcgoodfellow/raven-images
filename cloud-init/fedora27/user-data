@@ -1,0 +1,13 @@
+#cloud-config
+password: muffins
+chpasswd: { expire: False }
+ssh_pwauth: True
+
+system_info:
+  default_user:
+    name: root
+
+disable_root: false
+
+network:
+  config: disabled

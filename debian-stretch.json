@@ -7,7 +7,7 @@
     "output_directory": "output-debian-stretch-amd64-{{build_type}}",
     "vm_name": "debian-stretch",
     "disk_size": "{{user `disk_size`}}",
-    "headless": "true",
+    "headless": "false",
     "accelerator": "kvm",
     "http_directory": "http",
     "boot_wait": "5s",
@@ -23,7 +23,8 @@
     "shutdown_command": "sudo systemctl poweroff",
     "qemuargs": [
       ["-m", "{{user `memory`}}"],
-      ["-smp", "{{user `cpus`}}"]
+      ["-smp", "{{user `cpus`}}"],
+      ["-display", "gtk"]
     ]
   }], 
   "provisioners": [{
