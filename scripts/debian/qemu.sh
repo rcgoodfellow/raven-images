@@ -10,4 +10,3 @@ sudo sed \
 
 sudo update-grub
 
-sudo apt-get install -y python bash-completion vim tmux

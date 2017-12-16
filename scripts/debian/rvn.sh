@@ -3,15 +3,14 @@
 set -e
 set -x
 
-sudo apt-get update
-sudo apt-get install -y \
-	vim \
-	tmux \
-	bash-completion \
-	ssh \
-	tree \
-	nfs-common
+export DEBIAN_FRONTEND=noninteractive
 
-sudo apt-cache autoremove
-sudo apt-cache clean
-sudo apt-cache autoclean
+sudo apt-get update -y
+sudo apt-get install -y \
+	vim-nox emacs-nox tmux \
+	bash-completion \
+	ssh tree nfs-common python
+
+sudo apt-get autoremove
+sudo apt-get clean
+sudo apt-get autoclean

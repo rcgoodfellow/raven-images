@@ -1,55 +1,55 @@
 {
-    "builders": [{
-        "type": "qemu",
-        "accelerator": "kvm",
-        "iso_url": "Fedora-Cloud-Base-27-20171110.n.1.x86_64.qcow2",
-        "disk_image": true,
-        "iso_checksum": "{{user `iso_checksum`}}",
-        "disk_compression": true,
-        "iso_checksum_type": "{{user `iso_checksum_type`}}",
-        "output_directory": "{{user `build_dir`}}",
-        "vm_name": "{{user `vm_name`}}",
-        "disk_size": "{{user `disk_size`}}",
-        "format": "qcow2",
-        "headless": "{{user `headless`}}",
-        "http_directory": "http",
-        "boot_wait": "5s",
-        "ssh_timeout": "{{user `ssh_timeout`}}",
-        "ssh_username": "root",
-        "ssh_password": "muffins",
-        "shutdown_command": "systemctl poweroff",
-        "qemuargs": [
-            ["-m", "{{user `memory`}}"],
-            ["-smp", "{{user `cpus`}}"],
-            ["-cdrom", "cloud-init/fedora27-config.iso"],
-            ["-display", "gtk"]
-        ],
-        "net_device": "virtio-net",
-        "disk_interface": "virtio"
-    }],
-    "provisioners": [{
-        "type": "shell",
-        "scripts": [
-            "scripts/fedora/dnf.sh",
-            "scripts/common/rvn.sh",
-            "scripts/common/sshd.sh",
-            "scripts/fedora/sudoers.sh",
-            "scripts/fedora/sources.sh",
-            "scripts/fedora/cleanup.sh",
-            "scripts/common/minimize.sh"
+  "builders": [{
+    "type": "qemu",
+    "accelerator": "kvm",
+    "iso_url": "Fedora-Cloud-Base-27-20171110.n.1.x86_64.qcow2",
+    "disk_image": true,
+    "iso_checksum": "{{user `iso_checksum`}}",
+    "iso_checksum_type": "{{user `iso_checksum_type`}}",
+    "output_directory": "{{user `build_dir`}}",
+    "vm_name": "{{user `vm_name`}}",
+    "disk_size": "{{user `disk_size`}}",
+    "format": "qcow2",
+    "disk_compression": true,
+    "headless": "{{user `headless`}}",
+    "http_directory": "http",
+    "boot_wait": "5s",
+    "ssh_timeout": "{{user `ssh_timeout`}}",
+    "ssh_username": "root",
+    "ssh_password": "muffins",
+    "shutdown_command": "systemctl poweroff",
+    "qemuargs": [
+      ["-m", "{{user `memory`}}"],
+      ["-smp", "{{user `cpus`}}"],
+      ["-cdrom", "cloud-init/fedora27-config.iso"],
+      ["-display", "gtk"]
+    ],
+    "net_device": "virtio-net",
+    "disk_interface": "virtio"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "scripts": [
+      "scripts/fedora/dnf.sh",
+      "scripts/common/rvn.sh",
+      "scripts/common/sshd.sh",
+      "scripts/fedora/sudoers.sh",
+      "scripts/fedora/sources.sh",
+      "scripts/fedora/cleanup.sh",
+      "scripts/common/minimize.sh"
         ]
-    }],
-    "variables": {
-        "compression_level": "6",
-        "cpus": "4",
-        "disk_size": "20000",
-        "headless": "false",
-        "iso_checksum": "9104e5a9861bb70e0e7f4c0e06bfb1f7fc2801bc878a7192121758841a5c5c72",
-        "iso_checksum_type": "sha256",
-        "memory": "4096",
-        "mirror": "https://mirror.deterlab.net",
-        "ssh_timeout": "60m",
-        "vm_name": "Fedora27",
-        "build_dir": "build/Fedora27"
+  }],
+  "variables": {
+    "compression_level": "6",
+    "cpus": "4",
+    "disk_size": "20000",
+    "headless": "false",
+    "iso_checksum": "9104e5a9861bb70e0e7f4c0e06bfb1f7fc2801bc878a7192121758841a5c5c72",
+    "iso_checksum_type": "sha256",
+    "memory": "4096",
+    "mirror": "https://mirror.deterlab.net",
+    "ssh_timeout": "60m",
+    "vm_name": "Fedora27",
+    "build_dir": "build/Fedora27"
   }
 }
