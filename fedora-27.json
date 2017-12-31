@@ -2,7 +2,7 @@
   "builders": [{
     "type": "qemu",
     "accelerator": "kvm",
-    "iso_url": "Fedora-Cloud-Base-27-20171110.n.1.x86_64.qcow2",
+    "iso_url": "base/Fedora-Cloud-Base-27-1.6.x86_64.qcow2",
     "disk_image": true,
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
@@ -44,12 +44,12 @@
     "cpus": "4",
     "disk_size": "20000",
     "headless": "false",
-    "iso_checksum": "9104e5a9861bb70e0e7f4c0e06bfb1f7fc2801bc878a7192121758841a5c5c72",
+    "iso_checksum": "5af84b59b9c8c132adf4989fc8f20c6a0297b1b53ce992014d934a51cccdd4c9",
     "iso_checksum_type": "sha256",
     "memory": "4096",
     "mirror": "https://mirror.deterlab.net",
     "ssh_timeout": "60m",
-    "vm_name": "Fedora27",
-    "build_dir": "build/Fedora27"
+    "vm_name": "fedora-27",
+    "build_dir": "build/fedora/27"
   }
 }

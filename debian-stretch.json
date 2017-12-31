@@ -1,10 +1,10 @@
 {
   "builders": [{
     "type": "qemu",
-    "iso_url": "debian-9.3.0-amd64-netinst.iso",
+    "iso_url": "base/debian-9.3.0-amd64-netinst.iso",
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
-    "output_directory": "build/debian-stretch",
+    "output_directory": "build/debian/stretch",
     "format": "qcow2",
     "disk_compression": true,
     "vm_name": "debian-stretch",
