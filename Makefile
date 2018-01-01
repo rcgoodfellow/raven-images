@@ -12,7 +12,17 @@
 .PHONY: all
 all: \
 	build/fedora/27/fedora-27 \
-	build/debian/stretch/debian-stretch
+	build/debian/stretch/debian-stretch \
+	build/cumulus/3.5/cumulusvx-3.5
+
+.PHONY: fedora
+fedora: build/fedora/27/fedora-27
+
+.PHONY: debian
+debian: build/debian/stretch/debian-stretch  
+
+.PHONY: cumulus
+cumulus: build/cumulus/3.5/cumulusvx-3.5
 
 ###
 ### Fedora images
@@ -45,13 +55,28 @@ build/debian:
 	sudo mkdir -p build/debian
 
 build/debian/stretch/debian-stretch: base/${STRETCH_BASE} build/debian
-	sudo mkdir -p build/debian
 	sudo -E ${packer} build debian-stretch.json
 
 base/$(STRETCH_BASE): base
 	wget --directory-prefix base ${STRETCH_URL}
 
 debian-clean:
+
+###
+### Cumulus images
+###
+CUMULUS_MIRROR=http://cumulusfiles.s3.amazonaws.com
+CUMULUS_BASE=cumulus-linux-3.5.0-vx-amd64.qcow2
+CUMULUS_URL=${CUMULUS_MIRROR}/${CUMULUS_BASE}
+
+build/cumulus:
+	sudo mkdir -p build/cumulus
+
+build/cumulus/3.5/cumulusvx-3.5: base/${CUMULUS_BASE} build/cumulus
+	sudo -E ${packer} build cumulus-35.json
+
+base/$(CUMULUS_BASE): base
+	wget --directory-prefix base ${CUMULUS_URL}
 
 # cracklib comes with an executable called 'packer' that typically goes into
 # /usr/sbin, so when executing `sudo packer` on a system with cracklib that is 
