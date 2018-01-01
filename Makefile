@@ -34,8 +34,9 @@ F27_URL=${FEDORA_MIRROR}/27/CloudImages/x86_64/images/${F27_BASE}
 build/fedora:
 	sudo mkdir -p build/fedora
 
-build/fedora/27/fedora-27: base/${F27_BASE} build/fedora
+build/fedora/27/fedora-27: base/${F27_BASE} build/fedora fedora-27.json cloud-init/build-iso.sh cloud-init/fedora27/user-data cloud-init/fedora27/meta-data
 	cd cloud-init; ./build-iso.sh
+	sudo rm -rf build/fedora/27
 	sudo -E ${packer} build fedora-27.json
 
 base/$(F27_BASE): base
@@ -54,7 +55,8 @@ STRETCH_URL=${DEBIAN_MIRROR}/current/amd64/iso-cd/${STRETCH_BASE}
 build/debian:
 	sudo mkdir -p build/debian
 
-build/debian/stretch/debian-stretch: base/${STRETCH_BASE} build/debian
+build/debian/stretch/debian-stretch: base/${STRETCH_BASE} build/debian debian-stretch.json
+	sudo rm -rf build/debian/stretch
 	sudo -E ${packer} build debian-stretch.json
 
 base/$(STRETCH_BASE): base
@@ -72,7 +74,8 @@ CUMULUS_URL=${CUMULUS_MIRROR}/${CUMULUS_BASE}
 build/cumulus:
 	sudo mkdir -p build/cumulus
 
-build/cumulus/3.5/cumulusvx-3.5: base/${CUMULUS_BASE} build/cumulus
+build/cumulus/3.5/cumulusvx-3.5: base/${CUMULUS_BASE} build/cumulus cumulus-35.json
+	sudo rm -rf build/cumulus/3.5
 	sudo -E ${packer} build cumulus-35.json
 
 base/$(CUMULUS_BASE): base

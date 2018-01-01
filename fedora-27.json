@@ -15,9 +15,9 @@
     "http_directory": "http",
     "boot_wait": "5s",
     "ssh_timeout": "{{user `ssh_timeout`}}",
-    "ssh_username": "root",
-    "ssh_password": "muffins",
-    "shutdown_command": "systemctl poweroff",
+    "ssh_username": "rvn",
+    "ssh_password": "rvn",
+    "shutdown_command": "sudo systemctl poweroff",
     "qemuargs": [
       ["-m", "{{user `memory`}}"],
       ["-smp", "{{user `cpus`}}"],
@@ -29,12 +29,14 @@
   }],
   "provisioners": [{
     "type": "shell",
+    "execute_command": "{{.Vars}} sudo '{{.Path}}'",
     "scripts": [
       "scripts/fedora/dnf.sh",
       "scripts/common/rvn.sh",
       "scripts/common/sshd.sh",
       "scripts/fedora/sudoers.sh",
       "scripts/fedora/sources.sh",
+      "scripts/fedora/cloud.sh",
       "scripts/fedora/cleanup.sh",
       "scripts/common/minimize.sh"
         ]
