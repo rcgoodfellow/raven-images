@@ -3,9 +3,10 @@
 set -e
 set -x
 
-date | sudo tee /etc/vagrant_box_build_time
+date | sudo tee /etc/rvn_build_time
 
-mkdir -p ~/.ssh
-curl -fsSLo ~/.ssh/authorized_keys http://mirror.deterlab.net/rvn/rvn.pub
-chmod 700 ~/.ssh/
-chmod 600 ~/.ssh/authorized_keys
+mkdir -p /home/rvn/.ssh
+curl -fsSLo /home/rvn/.ssh/authorized_keys http://mirror.deterlab.net/rvn/rvn.pub
+chmod 700 /home/rvn/.ssh/
+chmod 600 /home/rvn/.ssh/authorized_keys
+chown -R rvn:rvn /home/rvn/.ssh

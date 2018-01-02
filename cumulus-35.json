@@ -32,6 +32,7 @@
     "type": "shell",
     "execute_command": "{{.Vars}} echo 'CumulusLinux!' | sudo -S '{{.Path}}'",
     "scripts": [
+      "scripts/cumulus/rvn.sh",
       "scripts/cumulus/dosudo.sh",
       "scripts/common/rvn.sh",
       "scripts/common/sshd.sh",
