@@ -24,6 +24,9 @@ debian: build/debian/stretch/debian-stretch
 .PHONY: cumulus
 cumulus: build/cumulus/3.5/cumulusvx-3.5
 
+.PHONY: freebsd
+freebsd: build/freebsd/11/freebsd-11 build/freebsdr/11/freebsd-11r
+
 ###
 ### Fedora images
 ### 
@@ -81,6 +84,36 @@ build/cumulus/3.5/cumulusvx-3.5: base/${CUMULUS_BASE} build/cumulus cumulus-35.j
 base/$(CUMULUS_BASE): base
 	wget --directory-prefix base ${CUMULUS_URL}
 
+
+###
+### Freebsd Images
+###
+FREEBSD_MIRROR=http://ftp.freebsd.org
+FREEBSD11_BASE=FreeBSD-11.1-RELEASE-amd64-disc1.iso
+FREEBSD11_URL=${FREEBSD_MIRROR}/pub/FreeBSD/releases/ISO-IMAGES/11.1/${FREEBSD11_BASE}
+
+base/$(FREEBSD11_BASE): base
+	wget --directory-prefix base ${FREEBSD11_URL}
+
+build/freebsd:
+	sudo mkdir -p build/freebsd
+
+
+build/freebsd/11/freebsd-11: base/${FREEBSD11_BASE} build/freebsd freebsd-11.json
+	sudo rm -rf build/freebsd/11
+	sudo -E ${packer} build freebsd-11.json
+
+build/freebsdr:
+	sudo mkdir -p build/freebsdr
+
+build/freebsdr/11/freebsd-11r: base/${FREEBSD11_BASE} build/freebsdr freebsd-11-router.json
+	sudo rm -rf build/freebsdr/11
+	sudo -E ${packer} build freebsd-11-router.json
+
+###
+### Helpers
+###
+
 # cracklib comes with an executable called 'packer' that typically goes into
 # /usr/sbin, so when executing `sudo packer` on a system with cracklib that is 
 # what gets resolved, save the packer path here for later use with sudo
@@ -94,4 +127,3 @@ clean: fedora-clean debian-clean
 
 distclean: clean
 	rm -rf base
-

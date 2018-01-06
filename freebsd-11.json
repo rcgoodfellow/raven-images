@@ -1,0 +1,60 @@
+{
+  "builders": [{
+    "type": "qemu",
+    "accelerator": "kvm",
+    "iso_url": "base/FreeBSD-11.1-RELEASE-amd64-disc1.iso",
+    "iso_checksum": "{{user `iso_checksum`}}",
+    "iso_checksum_type": "{{user `iso_checksum_type`}}",
+    "output_directory": "{{user `build_dir`}}",
+    "vm_name": "{{user `vm_name`}}",
+    "disk_size": "{{user `disk_size`}}",
+    "format": "qcow2",
+    "disk_compression": true,
+    "headless": "{{user `headless`}}",
+    "http_directory": "http",
+    "boot_wait": "5s",
+    "ssh_timeout": "{{user `ssh_timeout`}}",
+    "ssh_username": "rvn",
+    "ssh_password": "rvn",
+    "boot_command": [
+        "<space><space>2<enter><wait10><wait10>",
+        "<enter><wait><enter><wait>",
+        "mdmfs -s 100m md1 /tmp<enter><wait>",
+        "dhclient -l /tmp/dhclient.leases -p /tmp/dhclient.pid vtnet0<enter><wait5>",
+        "fetch -o /tmp/installerconfig http://{{.HTTPIP}}:{{.HTTPPort}}/freebsd-11.0/installerconfig<enter><wait>",
+        "sed -i -e s/HTTPIP/{{.HTTPIP}}/ /tmp/installerconfig<enter><wait>",
+        "sed -i -e s/HTTPPort/{{.HTTPPort}}/ /tmp/installerconfig<enter><wait>",
+        "bsdinstall script /tmp/installerconfig && reboot<enter>"
+    ],
+    "shutdown_command": "sudo poweroff",
+    "qemuargs": [
+      ["-m", "{{user `memory`}}M"],
+      ["-smp", "{{user `cpus`}}"],
+      ["-display", "gtk"]
+    ]
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "scripts": [
+        "scripts/freebsd/init.sh",
+        "scripts/freebsd/update.sh",
+        "scripts/freebsd/packages-rvn.sh",
+        "scripts/common/rvn.sh",
+        "scripts/common/sshd.sh",
+        "scripts/freebsd/cleanup.sh",
+        "scripts/freebsd/minimize.sh"
+    ]
+  }],
+  "variables": {
+    "compression_level": "6",
+    "cpus": "4",
+    "disk_size": "40000",
+    "headless": "false",
+    "iso_checksum": "ff4c749ea0aaaceedb2432ba3e0fd0c1b64f5a72141b1ec06b9ced52b5de0dbf",
+    "iso_checksum_type": "sha256",
+    "memory": "2048",
+    "ssh_timeout": "120m",
+    "vm_name": "freebsd-11",
+    "build_dir": "build/freebsd/11"
+  }
+}

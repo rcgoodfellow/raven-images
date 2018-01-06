@@ -1,0 +1,72 @@
+# The virtualbox extensions depend on src and lib32
+DISTRIBUTIONS="kernel.txz base.txz lib32.txz src.txz" 
+
+if [ -e /dev/vtbd0 ]; then
+  PARTITIONS=vtbd0
+elif [ -e /dev/ada0 ]; then
+  PARTITIONS=ada0
+elif [ -e /dev/da0 ]; then
+  PARTITIONS=da0
+else
+  echo "ERROR: There is no disk available for installation" >&2
+  exit 1
+fi
+
+#!/bin/sh
+
+#
+# To save time, we download a tarball of the ports stable.  This is
+# to reduce the testing cycle should something go off the rails.  The
+# PACKER_URL is set via sed in the packer JSON config file.
+#
+PACKER_URL=http://HTTPIP:HTTPPort
+SVN_TARBALL=${PACKER_URL}/ports.tgz
+
+# Make sure ld is sane
+/etc/rc.d/ldconfig restart
+
+#
+# Configure networking
+#
+cat <<EOF > /etc/resolv.conf
+nameserver 8.8.8.8
+EOF
+
+# Prefer IPv4 networking, defaulting to IPv6 breaks svnlite in packer
+ip6addrctl add 	::1/128		 50	 0
+
+#
+# Setup Package Mirror
+#
+#cat << EOF > /etc/pkg/FreeBSD.conf
+#custom: {
+#	url: "https://fbsd-build.deterlab.net/11amd64-deter",
+#	enabled: yes
+#}
+#EOF
+
+#
+# Install sudo and curl
+#
+SSL_NO_VERIFY_PEER=yes ASSUME_ALWAYS_YES=yes pkg install sudo curl
+
+#
+# Setup rc.conf
+#
+interface=$(route get default | awk '/interface/ { print $2 }')
+cat <<EOF > /etc/rc.conf
+ifconfig_${interface}="DHCP"
+sshd_enable="YES"
+EOF
+
+#
+# Setup the raven user
+#
+echo 'rvn' | pw useradd rvn -h 0 -m
+echo 'rvn' | pw usermod root -h 0
+
+cat <<EOF > /usr/local/etc/sudoers.d/rvn
+Defaults:rvn !requiretty
+rvn ALL=(ALL) NOPASSWD: ALL
+EOF
+chmod 440 /usr/local/etc/sudoers.d/rvn
