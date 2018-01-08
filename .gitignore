@@ -5,3 +5,6 @@
 packer_cache
 build
 *.iso
+*.hwm
+*.pwd
+*.pwi

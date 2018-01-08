@@ -10,10 +10,8 @@
 # =============================================================================
 
 .PHONY: all
-all: \
-	build/fedora/27/fedora-27 \
-	build/debian/stretch/debian-stretch \
-	build/cumulus/3.5/cumulusvx-3.5
+all: fedora debian cumulus freebsd
+
 
 .PHONY: fedora
 fedora: build/fedora/27/fedora-27
@@ -26,6 +24,9 @@ cumulus: build/cumulus/3.5/cumulusvx-3.5
 
 .PHONY: freebsd
 freebsd: build/freebsd/11/freebsd-11 build/freebsdr/11/freebsd-11r
+
+.PHONY: install
+install: fedora-install debian-install cumulus-install freebsd-install freebsdr-install
 
 ###
 ### Fedora images
@@ -48,6 +49,9 @@ base/$(F27_BASE): base
 fedora-clean:
 	rm -rf cloud-init/*.iso
 
+fedora-install: build/fedora/27/fedora-27
+	sudo install $< /var/rvn/img/fedora-27.qcow2
+
 ###
 ### Debian images
 ###
@@ -67,6 +71,9 @@ base/$(STRETCH_BASE): base
 
 debian-clean:
 
+debian-install: build/debian/stretch/debian-stretch
+	sudo install $< /var/rvn/img/debian-stretch.qcow2
+
 ###
 ### Cumulus images
 ###
@@ -83,6 +90,9 @@ build/cumulus/3.5/cumulusvx-3.5: base/${CUMULUS_BASE} build/cumulus cumulus-35.j
 
 base/$(CUMULUS_BASE): base
 	wget --directory-prefix base ${CUMULUS_URL}
+
+cumulus-install: build/cumulus/3.5/cumulusvx-3.5
+	sudo install $< /var/rvn/img/cumulusvx-3.5.qcow2
 
 
 ###
@@ -109,6 +119,12 @@ build/freebsdr:
 build/freebsdr/11/freebsd-11r: base/${FREEBSD11_BASE} build/freebsdr freebsd-11-router.json
 	sudo rm -rf build/freebsdr/11
 	sudo -E ${packer} build freebsd-11-router.json
+
+freebsd-install: build/freebsd/11/freebsd-11
+	sudo install $< /var/rvn/img/freebsd-11.qcow2
+
+freebsdr-install: build/freebsdr/11/freebsd-11r
+	sudo install $< /var/rvn/img/freebsd-11r.qcow2
 
 ###
 ### Helpers

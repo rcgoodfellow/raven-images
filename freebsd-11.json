@@ -48,7 +48,7 @@
   "variables": {
     "compression_level": "6",
     "cpus": "4",
-    "disk_size": "40000",
+    "disk_size": "20000",
     "headless": "false",
     "iso_checksum": "ff4c749ea0aaaceedb2432ba3e0fd0c1b64f5a72141b1ec06b9ced52b5de0dbf",
     "iso_checksum_type": "sha256",
