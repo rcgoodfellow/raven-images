@@ -23,7 +23,10 @@ debian: build/debian/stretch/debian-stretch
 cumulus: build/cumulus/3.5/cumulusvx-3.5
 
 .PHONY: freebsd
-freebsd: build/freebsd/11/freebsd-11 build/freebsdr/11/freebsd-11r
+freebsd: \
+	build/freebsd/11/freebsd-11 \
+	build/freebsdr/11/freebsd-11r \
+	build/freebsdd/11/freebsd-11d
 
 .PHONY: install
 install: fedora-install debian-install cumulus-install freebsd-install freebsdr-install
@@ -102,6 +105,8 @@ FREEBSD_MIRROR=http://ftp.freebsd.org
 FREEBSD11_BASE=FreeBSD-11.1-RELEASE-amd64-disc1.iso
 FREEBSD11_URL=${FREEBSD_MIRROR}/pub/FreeBSD/releases/ISO-IMAGES/11.1/${FREEBSD11_BASE}
 
+# freebsd-11
+
 base/$(FREEBSD11_BASE): base
 	wget --directory-prefix base ${FREEBSD11_URL}
 
@@ -113,6 +118,11 @@ build/freebsd/11/freebsd-11: base/${FREEBSD11_BASE} build/freebsd freebsd-11.jso
 	sudo rm -rf build/freebsd/11
 	sudo -E ${packer} build freebsd-11.json
 
+freebsd-install: build/freebsd/11/freebsd-11
+	sudo install $< /var/rvn/img/freebsd-11.qcow2
+
+# freebsd-11r
+
 build/freebsdr:
 	sudo mkdir -p build/freebsdr
 
@@ -120,10 +130,19 @@ build/freebsdr/11/freebsd-11r: base/${FREEBSD11_BASE} build/freebsdr freebsd-11-
 	sudo rm -rf build/freebsdr/11
 	sudo -E ${packer} build freebsd-11-router.json
 
-freebsd-install: build/freebsd/11/freebsd-11
-	sudo install $< /var/rvn/img/freebsd-11.qcow2
-
 freebsdr-install: build/freebsdr/11/freebsd-11r
+	sudo install $< /var/rvn/img/freebsd-11r.qcow2
+
+# freebsd-11d
+
+build/freebsdd:
+	sudo mkdir -p build/freebsdd
+
+build/freebsdd/11/freebsd-11d: base/${FREEBSD11_BASE} build/freebsdd freebsd-11-deter.json
+	sudo rm -rf build/freebsdd/11
+	sudo -E ${packer} build freebsd-11-deter.json
+
+freebsdd-install: build/freebsdd/11/freebsd-11r
 	sudo install $< /var/rvn/img/freebsd-11r.qcow2
 
 ###

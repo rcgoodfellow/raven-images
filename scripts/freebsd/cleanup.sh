@@ -3,5 +3,5 @@
 set -e
 set -x
 
-sudo pkg clean
+sudo pkg clean -y
 
