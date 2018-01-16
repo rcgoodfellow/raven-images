@@ -38,13 +38,14 @@
       "scripts/common/rvn.sh",
       "scripts/common/sshd.sh",
       "scripts/cumulus/cleanup.sh",
+      "scripts/cumulus/expand.sh",
       "scripts/common/minimize.sh"
         ]
   }],
   "variables": {
     "compression_level": "6",
     "cpus": "4",
-    "disk_size": "20000",
+    "disk_size": "40000",
     "headless": "false",
     "iso_checksum": "0ac2463317c3fc427ae7f45a78c0b156d45a6f6dc98f2db61677e06de3a63334",
     "iso_checksum_type": "sha256",
