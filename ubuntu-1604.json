@@ -1,0 +1,52 @@
+{
+    "builders": [{
+        "type": "qemu",
+        "accelerator": "kvm",
+        "iso_url": "base/ubuntu-16.04-server-cloudimg-amd64-disk1.img",
+        "disk_image": true,
+        "iso_checksum": "{{user `iso_checksum`}}",
+        "iso_checksum_type": "{{user `iso_checksum_type`}}",
+        "output_directory": "{{user `build_dir`}}",
+        "vm_name": "{{user `vm_name`}}",
+        "disk_size": "{{user `disk_size`}}",
+        "format": "qcow2",
+        "disk_compression": true,
+        "headless": "{{user `headless`}}",
+        "http_directory": "http",
+        "boot_wait": "5s",
+        "ssh_timeout": "{{user `ssh_timeout`}}",
+        "ssh_username": "rvn",
+        "ssh_password": "rvn",
+        "shutdown_command": "sudo systemctl poweroff",
+        "qemuargs": [
+            ["-m", "{{user `memory`}}"],
+            ["-smp", "{{user `cpus`}}"],
+            ["-cdrom", "cloud-init/ubuntu-1604-config.iso"],
+            ["-nographic"]
+        ],
+        "net_device": "virtio-net",
+        "disk_interface": "virtio"
+    }],
+    "provisioners": [{
+      "type": "shell",
+      "execute_command": "{{.Vars}} sudo '{{.Path}}'",
+      "scripts": [
+        "scripts/ubuntu/wait.sh",
+        "scripts/ubuntu/qemu.sh",
+        "scripts/common/minimize.sh"
+      ]
+    }],
+    "variables": {
+        "compression_level": "6",
+        "cpus": "4",
+        "disk_size": "40000",
+        "iso_checksum": "da7a59cbaf43eaaa83ded0b0588bdcee4e722d9355bd6b9bfddd01b2e7e372e2",
+        "iso_checksum_type": "sha256",
+        "memory": "4096",
+        "mirror": "http://mirrors.kernel.org/ubuntu-releases",
+        "ssh_timeout": "60m",
+        "headless": "true",
+        "vm_name": "ubuntu",
+        "build_dir": "build/ubuntu/1604"
+  }
+}
