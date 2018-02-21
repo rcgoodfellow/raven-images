@@ -1,0 +1,43 @@
+#cloud-config
+
+# apt-update, but do not upgrade
+apt_update: true
+apt_upgrade: false
+
+disable_root: false
+
+# install base packages for base image
+packages:
+  - apt-transport-https
+  - openssh-server
+  - curl
+  - sudo
+  - vim-nox
+  - emacs-nox
+  - tmux
+  - bash-completion
+  - ssh
+  - tree
+  - nfs-common
+  - python
+
+# setup raven user, pw: rvn
+system_info:
+  default_user:
+    name: rvn
+    gecko: rvn
+    lock_passwd: False
+    plain_text_passwd: "rvn"
+    shell: /bin/bash
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+
+# add authorized keys to all users (rvn)
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3e0frRD6el0aK+kh6Ba4/Mc3pYs99BBVWf8pw3yMO31wR6+l/uscSu15oJGxbfsZknqZKKVfD925q03wcblzA3z0Q9F6uPb+gK+/q8+xWU9yzDKNF7zjqdzVuP+6E2xQv48pfAxu1/m3bqQHL1jLIbJG2V+53WaaCx+RG8OmyxPH0MVHzX2ajtpDP1K6/fKr+wCefxJ2yo6WRRh/95KlhaxLNPNql3xJno3HIYd3x2+hR0hajtPHM6Gj2LORVUXui8M0ZaO/NWeyy3mcK3KTk2rkKlztuIFUyp7Z5L+wPzp6MEgDaQjoOEZXEM7WwqbeSNYv/2pQlOlZcTyYhRuTR ry@mirror
+
+# enable pw auth for packer
+ssh_pwauth: True
+
+# disable cloud-init network configuration
+network:
+  config: disabled

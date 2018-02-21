@@ -10,14 +10,17 @@
 # =============================================================================
 
 .PHONY: all
-all: fedora debian cumulus freebsd
+all: fedora debian ubuntu cumulus freebsd
 
 
 .PHONY: fedora
 fedora: build/fedora/27/fedora-27
 
 .PHONY: debian
-debian: build/debian/stretch/debian-stretch  
+debian: build/debian/stretch/debian-stretch
+
+.PHONY: ubuntu
+ubuntu: build/ubuntu/1604/ubuntu-1604
 
 .PHONY: cumulus
 cumulus: build/cumulus/3.5/cumulusvx-3.5
@@ -29,7 +32,7 @@ freebsd: \
 	build/freebsdd/11/freebsd-11d
 
 .PHONY: install
-install: fedora-install debian-install cumulus-install freebsd-install freebsdr-install
+install: fedora-install debian-install ubuntu-install cumulus-install freebsd-install freebsdr-install
 
 ###
 ### Fedora images
@@ -50,7 +53,7 @@ base/$(F27_BASE): | base
 	wget --directory-prefix base ${F27_URL}
 
 fedora-clean:
-	rm -rf cloud-init/*.iso
+	rm -rf cloud-init/*fedora*.iso
 
 fedora-install: build/fedora/27/fedora-27
 	sudo install $< /var/rvn/img/fedora-27.qcow2
@@ -76,6 +79,32 @@ debian-clean:
 
 debian-install: build/debian/stretch/debian-stretch
 	sudo install $< /var/rvn/img/debian-stretch.qcow2
+
+
+###
+### Ubuntu images
+###
+UBUNTU_MIRROR=https://cloud-images.ubuntu.com
+UBUNTU_1604=ubuntu-16.04-server-cloudimg-amd64-disk1.img
+UBUNTU_URL=${UBUNTU_MIRROR}/releases/16.04/release/${UBUNTU_1604}
+
+build/ubuntu:
+	sudo mkdir -p build/ubuntu
+
+build/ubuntu/1604/ubuntu-1604: base/${UBUNTU_1604} build/ubuntu ubuntu-1604.json cloud-init/build-iso-ubuntu.sh cloud-init/ubuntu1604/user-data cloud-init/ubuntu1604/meta-data
+	cd cloud-init; ./build-iso-ubuntu.sh
+	sudo rm -rf build/ubuntu/1604
+	sudo -E ${packer} build ubuntu-1604.json
+
+base/$(UBUNTU_1604): base
+	wget --directory-prefix base ${UBUNTU_URL}
+
+ubuntu-clean:
+	rm -rf cloud-init/*ubuntu*.iso
+
+ubuntu-install: build/ubuntu/1604/ubuntu-1604
+	sudo install $< /var/rvn/img/ubuntu-1604.qcow2
+
 
 ###
 ### Cumulus images
@@ -157,7 +186,7 @@ packer=`which packer`
 base:
 	mkdir -p base
 
-clean: fedora-clean debian-clean
+clean: fedora-clean debian-clean ubuntu-clean
 	sudo rm -rf build
 
 distclean: clean
