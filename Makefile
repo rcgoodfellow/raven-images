@@ -20,7 +20,7 @@ fedora: build/fedora/27/fedora-27
 debian: build/debian/stretch/debian-stretch
 
 .PHONY: ubuntu
-ubuntu: build/ubuntu/1604/ubuntu-1604
+ubuntu: build/ubuntu/1604/ubuntu
 
 .PHONY: cumulus
 cumulus: build/cumulus/3.5/cumulusvx-3.5
@@ -44,17 +44,21 @@ F27_URL=${FEDORA_MIRROR}/27/CloudImages/x86_64/images/${F27_BASE}
 build/fedora:
 	sudo mkdir -p build/fedora
 
-build/fedora/27/fedora-27: fedora-27.json cloud-init/build-iso.sh cloud-init/fedora27/user-data cloud-init/fedora27/meta-data | build/fedora base/${F27_BASE} 
-	cd cloud-init; ./build-iso.sh
+build/fedora/27/fedora-27: fedora-27.json cloud-init/fedora27-config.iso | build/fedora base/${F27_BASE} 
+	cd cloud-init; ./build-iso-fedora.sh
 	sudo rm -rf build/fedora/27
 	sudo -E ${packer} build fedora-27.json
+
+cloud-init/fedora27-config.iso: cloud-init/build-iso-fedora.sh cloud-init/fedora27/user-data cloud-init/fedora27/meta-data
 
 base/$(F27_BASE): | base
 	wget --directory-prefix base ${F27_URL}
 
+.PHONY: fedora-clean
 fedora-clean:
 	rm -rf cloud-init/*fedora*.iso
 
+.PHONY: fedora-install
 fedora-install: build/fedora/27/fedora-27
 	sudo install $< /var/rvn/img/fedora-27.qcow2
 
@@ -75,8 +79,10 @@ build/debian/stretch/debian-stretch: debian-stretch.json | build/debian base/${S
 base/$(STRETCH_BASE): | base
 	wget --directory-prefix base ${STRETCH_URL}
 
+.PHONY: debian-clean
 debian-clean:
 
+.PHONY: debian-install
 debian-install: build/debian/stretch/debian-stretch
 	sudo install $< /var/rvn/img/debian-stretch.qcow2
 
@@ -88,20 +94,24 @@ UBUNTU_MIRROR=https://cloud-images.ubuntu.com
 UBUNTU_1604=ubuntu-16.04-server-cloudimg-amd64-disk1.img
 UBUNTU_URL=${UBUNTU_MIRROR}/releases/16.04/release/${UBUNTU_1604}
 
-build/ubuntu:
-	sudo mkdir -p build/ubuntu
-
-build/ubuntu/1604/ubuntu-1604: base/${UBUNTU_1604} build/ubuntu ubuntu-1604.json cloud-init/build-iso-ubuntu.sh cloud-init/ubuntu1604/user-data cloud-init/ubuntu1604/meta-data
-	cd cloud-init; ./build-iso-ubuntu.sh
+build/ubuntu/1604/ubuntu: ubuntu-1604.json cloud-init/ubuntu-1604-config.iso | build/ubuntu base/${UBUNTU_1604} 
 	sudo rm -rf build/ubuntu/1604
 	sudo -E ${packer} build ubuntu-1604.json
 
-base/$(UBUNTU_1604): base
+cloud-init/ubuntu-1604-config.iso: cloud-init/build-iso-ubuntu.sh cloud-init/ubuntu1604/user-data cloud-init/ubuntu1604/meta-data 
+	cd cloud-init; ./build-iso-ubuntu.sh
+
+build/ubuntu:
+	sudo mkdir -p build/ubuntu
+
+base/$(UBUNTU_1604): | base
 	wget --directory-prefix base ${UBUNTU_URL}
 
+.PHONY: ubuntu-clean
 ubuntu-clean:
 	rm -rf cloud-init/*ubuntu*.iso
 
+.PHONY: ubuntu-install
 ubuntu-install: build/ubuntu/1604/ubuntu-1604
 	sudo install $< /var/rvn/img/ubuntu-1604.qcow2
 
@@ -123,6 +133,7 @@ build/cumulus/3.5/cumulusvx-3.5: cumulus-35.json | build/cumulus base/${CUMULUS_
 base/$(CUMULUS_BASE): | base
 	wget --directory-prefix base ${CUMULUS_URL}
 
+.PHONY: cumulus-install
 cumulus-install: build/cumulus/3.5/cumulusvx-3.5
 	sudo install $< /var/rvn/img/cumulusvx-3.5.qcow2
 
@@ -147,6 +158,7 @@ build/freebsd/11/freebsd-11: freebsd-11.json | build/freebsd base/${FREEBSD11_BA
 	sudo rm -rf build/freebsd/11
 	sudo -E ${packer} build freebsd-11.json
 
+.PHONY: freebsd-install
 freebsd-install: build/freebsd/11/freebsd-11
 	sudo install $< /var/rvn/img/freebsd-11.qcow2
 
@@ -159,6 +171,7 @@ build/freebsdr/11/freebsd-11r: freebsd-11-router.json | base/${FREEBSD11_BASE} b
 	sudo rm -rf build/freebsdr/11
 	sudo -E ${packer} build freebsd-11-router.json
 
+.PHONY: freebsdr-install
 freebsdr-install: build/freebsdr/11/freebsd-11r
 	sudo install $< /var/rvn/img/freebsd-11r.qcow2
 
@@ -171,6 +184,7 @@ build/freebsdd/11/freebsd-11d: freebsd-11-deter.json | base/${FREEBSD11_BASE} bu
 	sudo rm -rf build/freebsdd/11
 	sudo -E ${packer} build freebsd-11-deter.json
 
+.PHONY: freebsdd-install
 freebsdd-install: build/freebsdd/11/freebsd-11r
 	sudo install $< /var/rvn/img/freebsd-11r.qcow2
 
@@ -186,8 +200,10 @@ packer=`which packer`
 base:
 	mkdir -p base
 
+.PHONY: clean
 clean: fedora-clean debian-clean ubuntu-clean
 	sudo rm -rf build
 
+.PHONY: distclean
 distclean: clean
 	rm -rf base
