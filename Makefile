@@ -41,12 +41,12 @@ F27_URL=${FEDORA_MIRROR}/27/CloudImages/x86_64/images/${F27_BASE}
 build/fedora:
 	sudo mkdir -p build/fedora
 
-build/fedora/27/fedora-27: base/${F27_BASE} build/fedora fedora-27.json cloud-init/build-iso.sh cloud-init/fedora27/user-data cloud-init/fedora27/meta-data
+build/fedora/27/fedora-27: fedora-27.json cloud-init/build-iso.sh cloud-init/fedora27/user-data cloud-init/fedora27/meta-data | build/fedora base/${F27_BASE} 
 	cd cloud-init; ./build-iso.sh
 	sudo rm -rf build/fedora/27
 	sudo -E ${packer} build fedora-27.json
 
-base/$(F27_BASE): base
+base/$(F27_BASE): | base
 	wget --directory-prefix base ${F27_URL}
 
 fedora-clean:
@@ -65,11 +65,11 @@ STRETCH_URL=${DEBIAN_MIRROR}/current/amd64/iso-cd/${STRETCH_BASE}
 build/debian:
 	sudo mkdir -p build/debian
 
-build/debian/stretch/debian-stretch: base/${STRETCH_BASE} build/debian debian-stretch.json
+build/debian/stretch/debian-stretch: debian-stretch.json | build/debian base/${STRETCH_BASE} 
 	sudo rm -rf build/debian/stretch
 	sudo -E ${packer} build debian-stretch.json
 
-base/$(STRETCH_BASE): base
+base/$(STRETCH_BASE): | base
 	wget --directory-prefix base ${STRETCH_URL}
 
 debian-clean:
@@ -87,11 +87,11 @@ CUMULUS_URL=${CUMULUS_MIRROR}/${CUMULUS_BASE}
 build/cumulus:
 	sudo mkdir -p build/cumulus
 
-build/cumulus/3.5/cumulusvx-3.5: base/${CUMULUS_BASE} build/cumulus cumulus-35.json
+build/cumulus/3.5/cumulusvx-3.5: cumulus-35.json | build/cumulus base/${CUMULUS_BASE} 
 	sudo rm -rf build/cumulus/3.5
 	sudo -E ${packer} build cumulus-35.json
 
-base/$(CUMULUS_BASE): base
+base/$(CUMULUS_BASE): | base
 	wget --directory-prefix base ${CUMULUS_URL}
 
 cumulus-install: build/cumulus/3.5/cumulusvx-3.5
@@ -107,14 +107,14 @@ FREEBSD11_URL=${FREEBSD_MIRROR}/pub/FreeBSD/releases/ISO-IMAGES/11.1/${FREEBSD11
 
 # freebsd-11
 
-base/$(FREEBSD11_BASE): base
+base/$(FREEBSD11_BASE): | base
 	wget --directory-prefix base ${FREEBSD11_URL}
 
 build/freebsd:
 	sudo mkdir -p build/freebsd
 
 
-build/freebsd/11/freebsd-11: base/${FREEBSD11_BASE} build/freebsd freebsd-11.json
+build/freebsd/11/freebsd-11: freebsd-11.json | build/freebsd base/${FREEBSD11_BASE} 
 	sudo rm -rf build/freebsd/11
 	sudo -E ${packer} build freebsd-11.json
 
@@ -126,7 +126,7 @@ freebsd-install: build/freebsd/11/freebsd-11
 build/freebsdr:
 	sudo mkdir -p build/freebsdr
 
-build/freebsdr/11/freebsd-11r: base/${FREEBSD11_BASE} build/freebsdr freebsd-11-router.json
+build/freebsdr/11/freebsd-11r: freebsd-11-router.json | base/${FREEBSD11_BASE} build/freebsdr 
 	sudo rm -rf build/freebsdr/11
 	sudo -E ${packer} build freebsd-11-router.json
 
@@ -138,7 +138,7 @@ freebsdr-install: build/freebsdr/11/freebsd-11r
 build/freebsdd:
 	sudo mkdir -p build/freebsdd
 
-build/freebsdd/11/freebsd-11d: base/${FREEBSD11_BASE} build/freebsdd freebsd-11-deter.json
+build/freebsdd/11/freebsd-11d: freebsd-11-deter.json | base/${FREEBSD11_BASE} build/freebsdd 
 	sudo rm -rf build/freebsdd/11
 	sudo -E ${packer} build freebsd-11-deter.json
 

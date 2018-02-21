@@ -20,3 +20,6 @@ partprobe
 # resize the root filesystem to take up the maximum available space
 btrfs filesystem resize max /
 
+# rebalance the filesystem so we don't run out of metadata blocks
+btrfs balance start --full-balance /
+
