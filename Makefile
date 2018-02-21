@@ -45,11 +45,11 @@ build/fedora:
 	sudo mkdir -p build/fedora
 
 build/fedora/27/fedora-27: fedora-27.json cloud-init/fedora27-config.iso | build/fedora base/${F27_BASE} 
-	cd cloud-init; ./build-iso-fedora.sh
 	sudo rm -rf build/fedora/27
 	sudo -E ${packer} build fedora-27.json
 
 cloud-init/fedora27-config.iso: cloud-init/build-iso-fedora.sh cloud-init/fedora27/user-data cloud-init/fedora27/meta-data
+	cd cloud-init; ./build-iso-fedora.sh
 
 base/$(F27_BASE): | base
 	wget --directory-prefix base ${F27_URL}
