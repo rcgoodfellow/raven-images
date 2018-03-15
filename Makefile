@@ -23,7 +23,7 @@ debian: build/debian/stretch/debian-stretch
 ubuntu: build/ubuntu/1604/ubuntu
 
 .PHONY: cumulus
-cumulus: build/cumulus/3.5/cumulusvx-3.5
+cumulus: build/cumulus/3.5/cumulusvx-3.5 build/cumulus/3.5-mvrf/cumulusvx-3.5-mvrf
 
 .PHONY: freebsd
 freebsd: \
@@ -130,12 +130,17 @@ build/cumulus/3.5/cumulusvx-3.5: cumulus-35.json | build/cumulus base/${CUMULUS_
 	sudo rm -rf build/cumulus/3.5
 	sudo -E ${packer} build cumulus-35.json
 
+build/cumulus/3.5-mvrf/cumulusvx-3.5-mvrf: cumulus-35-mvrf.json | build/cumulus base/${CUMULUS_BASE} 
+	sudo rm -rf build/cumulus/3.5-mvrf
+	sudo -E ${packer} build cumulus-35-mvrf.json
+
 base/$(CUMULUS_BASE): | base
 	wget --directory-prefix base ${CUMULUS_URL}
 
 .PHONY: cumulus-install
-cumulus-install: build/cumulus/3.5/cumulusvx-3.5
-	sudo install $< /var/rvn/img/cumulusvx-3.5.qcow2
+cumulus-install: build/cumulus/3.5/cumulusvx-3.5 build/cumulus/3.5-mvrf/cumulusvx-3.5-mvrf
+	sudo install $(word 1,$^) /var/rvn/img/cumulusvx-3.5.qcow2
+	sudo install $(word 2,$^) /var/rvn/img/cumulusvx-3.5-mvrf.qcow2
 
 
 ###
