@@ -23,3 +23,4 @@ btrfs filesystem resize max /
 # rebalance the filesystem so we don't run out of metadata blocks
 btrfs balance start --full-balance /
 
+update-initramfs -u

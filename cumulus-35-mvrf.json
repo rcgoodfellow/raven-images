@@ -2,7 +2,7 @@
   "builders": [{
     "type": "qemu",
     "accelerator": "kvm",
-    "iso_url": "base/cumulus-linux-3.5.0-vx-amd64.qcow2",
+    "iso_url": "base/cumulus-linux-3.5.3-vx-amd64.qcow2",
     "disk_image": true,
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
@@ -59,7 +59,7 @@
     "cpus": "4",
     "disk_size": "40000",
     "headless": "false",
-    "iso_checksum": "0ac2463317c3fc427ae7f45a78c0b156d45a6f6dc98f2db61677e06de3a63334",
+    "iso_checksum": "b504fae4ea18f38357054090a3a346169bc88e0e9c1bcc6feecef02cf7e4df37",
     "iso_checksum_type": "sha256",
     "memory": "4096",
     "ssh_timeout": "60m",

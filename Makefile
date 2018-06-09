@@ -14,7 +14,7 @@ all: fedora debian ubuntu cumulus freebsd
 
 
 .PHONY: fedora
-fedora: build/fedora/27/fedora-27
+fedora: build/fedora/27/fedora-27 build/fedora/28/fedora-28
 
 .PHONY: debian
 debian: build/debian/stretch/debian-stretch
@@ -40,6 +40,8 @@ install: fedora-install debian-install ubuntu-install cumulus-install freebsd-in
 FEDORA_MIRROR=http://mirrors.kernel.org/fedora/releases
 F27_BASE=Fedora-Cloud-Base-27-1.6.x86_64.qcow2
 F27_URL=${FEDORA_MIRROR}/27/CloudImages/x86_64/images/${F27_BASE}
+F28_BASE=Fedora-Cloud-Base-28-1.1.x86_64.qcow2
+F28_URL=${FEDORA_MIRROR}/28/Cloud/x86_64/images/${F28_BASE}
 
 build/fedora:
 	sudo mkdir -p build/fedora
@@ -48,19 +50,27 @@ build/fedora/27/fedora-27: fedora-27.json cloud-init/fedora27-config.iso | build
 	sudo rm -rf build/fedora/27
 	sudo -E ${packer} build fedora-27.json
 
+build/fedora/28/fedora-28: fedora-28.json cloud-init/fedora27-config.iso | build/fedora base/${F28_BASE} 
+	sudo rm -rf build/fedora/28
+	sudo -E ${packer} build fedora-28.json
+
 cloud-init/fedora27-config.iso: cloud-init/build-iso-fedora.sh cloud-init/fedora27/user-data cloud-init/fedora27/meta-data
 	cd cloud-init; ./build-iso-fedora.sh
 
 base/$(F27_BASE): | base
 	wget --directory-prefix base ${F27_URL}
 
+base/$(F28_BASE): | base
+	wget --directory-prefix base ${F28_URL}
+
 .PHONY: fedora-clean
 fedora-clean:
 	rm -rf cloud-init/*fedora*.iso
 
 .PHONY: fedora-install
-fedora-install: build/fedora/27/fedora-27
+fedora-install: build/fedora/27/fedora-27 build/fedora/27/fedora-27
 	sudo install $< /var/rvn/img/fedora-27.qcow2
+	sudo install $< /var/rvn/img/fedora-28.qcow2
 
 ###
 ### Debian images
@@ -120,7 +130,7 @@ ubuntu-install: build/ubuntu/1604/ubuntu-1604
 ### Cumulus images
 ###
 CUMULUS_MIRROR=http://cumulusfiles.s3.amazonaws.com
-CUMULUS_BASE=cumulus-linux-3.5.0-vx-amd64.qcow2
+CUMULUS_BASE=cumulus-linux-3.5.3-vx-amd64.qcow2
 CUMULUS_URL=${CUMULUS_MIRROR}/${CUMULUS_BASE}
 
 build/cumulus:

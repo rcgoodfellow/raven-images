@@ -2,7 +2,7 @@
   "builders": [{
     "type": "qemu",
     "accelerator": "kvm",
-    "iso_url": "base/cumulus-linux-3.5.3-vx-amd64.qcow2",
+    "iso_url": "base/Fedora-Cloud-Base-28-1.1.x86_64.qcow2",
     "disk_image": true,
     "iso_checksum": "{{user `iso_checksum`}}",
     "iso_checksum_type": "{{user `iso_checksum_type`}}",
@@ -15,43 +15,43 @@
     "http_directory": "http",
     "boot_wait": "5s",
     "ssh_timeout": "{{user `ssh_timeout`}}",
-    "ssh_username": "cumulus",
-    "ssh_password": "CumulusLinux!",
-    "ssh_pty": "true",
+    "ssh_username": "rvn",
+    "ssh_password": "rvn",
     "shutdown_command": "sudo systemctl poweroff",
     "qemuargs": [
       ["-m", "{{user `memory`}}"],
       ["-smp", "{{user `cpus`}}"],
-      ["-display", "gtk"],
-      ["-vga", "cirrus"]
+      ["-cdrom", "cloud-init/fedora27-config.iso"],
+      ["-display", "gtk"]
     ],
     "net_device": "virtio-net",
     "disk_interface": "virtio"
   }],
   "provisioners": [{
     "type": "shell",
-    "execute_command": "{{.Vars}} echo 'CumulusLinux!' | sudo -S '{{.Path}}'",
+    "execute_command": "{{.Vars}} sudo '{{.Path}}'",
     "scripts": [
-      "scripts/cumulus/rvn.sh",
-      "scripts/cumulus/dosudo.sh",
-      "scripts/cumulus/apt.sh",
+      "scripts/fedora/dnf.sh",
       "scripts/common/rvn.sh",
       "scripts/common/sshd.sh",
-      "scripts/cumulus/cleanup.sh",
-      "scripts/cumulus/expand.sh",
+      "scripts/fedora/sudoers.sh",
+      "scripts/fedora/sources.sh",
+      "scripts/fedora/cloud.sh",
+      "scripts/fedora/cleanup.sh",
       "scripts/common/minimize.sh"
         ]
   }],
   "variables": {
     "compression_level": "6",
     "cpus": "4",
-    "disk_size": "40000",
+    "disk_size": "20000",
     "headless": "false",
-    "iso_checksum": "b504fae4ea18f38357054090a3a346169bc88e0e9c1bcc6feecef02cf7e4df37",
+    "iso_checksum": "d987209719fadaf81b8bff85c5d3590a1d3dac6357e4838fde8357086c49b5b4",
     "iso_checksum_type": "sha256",
     "memory": "4096",
+    "mirror": "https://mirror.deterlab.net",
     "ssh_timeout": "60m",
-    "vm_name": "cumulusvx-3.5",
-    "build_dir": "build/cumulus/3.5"
+    "vm_name": "fedora-28",
+    "build_dir": "build/fedora/28"
   }
 }
